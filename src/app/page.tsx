@@ -1,113 +1,172 @@
-import Image from 'next/image'
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import { Poppins } from "next/font/google";
+
+import { assets } from "@/utils/asset-utils";
+import { type Framework, frameworks } from "@/utils/framework-utils";
+import { cn } from "@/utils/tailwind-utils";
+import FrameworkRotation from "@/components/framework-rotation";
+import { CountdownTimer } from "@/components/countdown-timer";
+import { Cursor } from "@/components/cursor";
+
+const poppins = Poppins({
+  weight: "700",
+  subsets: ["latin"],
+});
 
 export default function Home() {
+  const [currentFramework, setCurrentFramework] = useState<Framework>(frameworks[0]);
+  const [showBg, setShowBg] = useState(false);
+
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    setShowBg(true);
+  }, []);
+
+  useEffect(() => {
+    let currentIndex = 0;
+    const rotateFrameworks = () => {
+      setCurrentFramework(frameworks[currentIndex]);
+      currentIndex = (currentIndex + 1) % frameworks.length;
+    };
+
+    const id = setInterval(rotateFrameworks, 2000);
+
+    return () => clearInterval(id);
+  }, []);
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
+    <main>
+      {/* changing color overlay  */}
+      <div
+        className={cn("fixed inset-0 transition-colors delay-100 duration-700 opacity-[.15]", {
+          "bg-purple-300": currentFramework === "qwik",
+          "bg-sky-300": currentFramework === "safari",
+          "bg-yellow-300": currentFramework === "chrome",
+          "bg-teal-300": currentFramework === "tailwind",
+          "bg-blue-300": currentFramework === "react",
+          "bg-green-300": currentFramework === "vue",
+          "bg-orange-400": currentFramework === "svelte",
+          "bg-red-300": currentFramework === "mobile",
+          "bg-neutral-300": currentFramework === "desktop",
+        })}
+      />
+
+      {/* grid boxes  */}
+      <div
+        className="fixed inset-0 opacity-30"
+        style={{
+          backgroundImage: `url(${assets.square})`,
+          backgroundSize: "30px",
+        }}
+      ></div>
+
+      {/* gradient bg  */}
+      <Image
+        src={assets.gradient}
+        width={1200}
+        height={1200}
+        role="presentation"
+        alt="gradient background"
+        className="fixed inset-0 w-screen h-screen object-cover"
+      />
+
+      {/* Reveal */}
+      <div
+        className={cn(
+          "bg-black fixed inset-0 transition-opacity duration-1000",
+          !showBg ? "opacity-100" : "opacity-0"
+        )}
+      />
+
+      {/* HEADING  */}
+      <div className="max-w-7xl mt-20 mx-auto">
+        <div className="flex flex-col items-center relative z-10">
+          <h1 className={`text-5xl max-w-3xl text-center leading-snug mb-12 ${poppins.className}`}>
             <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
+              alt="figma logo"
+              className="inline-block mr-8 -mt-2"
+              src={assets.figma}
+              width={50}
+              height={50}
             />
-          </a>
+            to <FrameworkRotation currentFramework={currentFramework} /> will{" "}
+            <span
+              className={cn("transition-colors delay-100 duration-500", {
+                "text-purple-300": currentFramework === "qwik",
+                "text-sky-300": currentFramework === "safari",
+                "text-yellow-300": currentFramework === "chrome",
+                "text-teal-300": currentFramework === "tailwind",
+                "text-blue-300": currentFramework === "react",
+                "text-green-300": currentFramework === "vue",
+                "text-orange-400": currentFramework === "svelte",
+                "text-red-300": currentFramework === "mobile",
+                "text-neutral-300": currentFramework === "desktop",
+              })}
+            >
+              never
+            </span>{" "}
+            be the same again
+          </h1>
+
+          {/* Sub heading */}
+          <p className="mb-8">
+            <span className="text-gray-300">Join us for an AI launch event by </span>
+            <Image
+              alt="Builder.io logo"
+              className="inline-block ml-1 -mt-1"
+              width={100}
+              height={20}
+              src={assets.builder}
+            />
+            {" + "}
+            <Image
+              alt="Figma logo"
+              className="inline-block mx-1"
+              width={55}
+              height={20}
+              src={assets.figmatwo}
+            />
+          </p>
+
+          {/* Claim ticket button */}
+          <div className="mb-8">
+            <button
+              ref={buttonRef}
+              className={cn(
+                "text-black px-6 py-3 rounded-md text-sm font-semibold transition-colors duration-200",
+                {
+                  "bg-purple-300": currentFramework === "qwik",
+                  "bg-sky-300": currentFramework === "safari",
+                  "bg-yellow-300": currentFramework === "chrome",
+                  "bg-teal-300": currentFramework === "tailwind",
+                  "bg-blue-300": currentFramework === "react",
+                  "bg-green-300": currentFramework === "vue",
+                  "bg-orange-400": currentFramework === "svelte",
+                  "bg-red-300": currentFramework === "mobile",
+                  "bg-neutral-300": currentFramework === "desktop",
+                }
+              )}
+            >
+              Claim Ticket
+            </button>
+
+            {/* Countdown timer */}
+            <CountdownTimer currentFramework={currentFramework} />
+          </div>
         </div>
       </div>
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore the Next.js 13 playground.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
+      <Cursor buttonRef={buttonRef} />
     </main>
-  )
+  );
 }
+
+// 1st add the grid
+// so these box images with transparent bottom and right side are used as bg image for the div, which has default behavior of repeating, so the bg image size is 30px each and will repeat and span throughtout the whole screen and the transparent bottom and right side will act like "border" and will create a grid.
+
+// 2nd add the gradient over the grid
+
+// install clsx and tailwind-merge, and create tailwind-utils.ts to create merging classnames
