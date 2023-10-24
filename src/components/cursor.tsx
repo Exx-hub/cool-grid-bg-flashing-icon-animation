@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useState, useEffect, RefObject } from "react";
 
 export const Cursor = ({ buttonRef }: { buttonRef: RefObject<HTMLButtonElement> }) => {
+  // starting position of cursor, hidden, not visible
   const [cursorPosition, setCursorPosition] = useState({
     x: -100,
     y: -100,
@@ -11,27 +12,32 @@ export const Cursor = ({ buttonRef }: { buttonRef: RefObject<HTMLButtonElement> 
   useEffect(() => {
     async function animateCursor() {
       if (!buttonRef.current) return;
-      // Initial 1-second delay
+
+      // Initial 1-second delay - for animation effect
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Move the cursor to the claim button
+      // use getBoundingClient to get position of button - use these corrdinates to move position of cursor
+      // this is possible becuase of ref place on button
       const buttonRect = buttonRef.current.getBoundingClientRect();
       const x = buttonRect.x + buttonRect.width / 2;
       const y = buttonRect.y + buttonRect.height / 2;
       setCursorPosition({ x, y });
 
-      // Additional 1-second delay
+      // Additional 1-second delay - for animation effect
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Update the cursor position to be 150px below the button
+      // move cursor 150px down --- will be followed by button - dragging effect
       const newY = y + 150;
       setCursorPosition({ x, y: newY });
 
       // Move the button down by 150px
+      // again this is possible because of the ref, able to adjust styling of button
       buttonRef.current.style.transition = "transform 700ms ease-in-out";
       buttonRef.current.style.transform = `translateY(150px)`;
 
-      // Additional 1-second delay
+      // Additional 1-second delay - for animation effect
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Move the cursor out of the screen
@@ -55,3 +61,6 @@ export const Cursor = ({ buttonRef }: { buttonRef: RefObject<HTMLButtonElement> 
     />
   );
 };
+
+// example of animating something into view / screen then away
+// useful for quick intro animations

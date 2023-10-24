@@ -31,6 +31,7 @@ export default function Home() {
     const rotateFrameworks = () => {
       setCurrentFramework(frameworks[currentIndex]);
       currentIndex = (currentIndex + 1) % frameworks.length;
+      // can use this to cycle through numbers of array length, from 0 to array length then back to zero and count up again
     };
 
     const id = setInterval(rotateFrameworks, 2000);
